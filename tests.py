@@ -69,6 +69,13 @@ class TestCOIBot(unittest.TestCase):
             "User group incorrectly identified as in allowlist",
         )
 
+    def test_user_denylists(self):
+        self.assertEqual(
+            COIBot.check_user_denylists("JarBot"),
+            True,
+            "User incorrectly identified as not in denylist",
+        )
+
     def test_project_denylists(self):
         self.assertEqual(
             COIBot.check_project_denylists("en.wikipedia.org"),

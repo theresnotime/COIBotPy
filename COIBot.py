@@ -69,6 +69,13 @@ def check_url_allowlists(url):
     return False
 
 
+def check_user_denylists(user):
+    """Check if a user is in the denylists"""
+    if user in denylists.users:
+        return True
+    return False
+
+
 def check_url_denylists(url):
     """Check if a URL is in the denylists"""
     registered_domain = get_base_domain(url)
@@ -137,6 +144,14 @@ if __name__ == "__main__":
                 cprint(
                     f"Bot edit by {performer['user_text']} to {project_domain}, skipping",
                     "blue",
+                )
+                continue
+
+            # Check performer against denylist
+            if check_user_denylists(performer["user_text"]):
+                cprint(
+                    f"User {performer['user_text']} is in denylist, skipping",
+                    "yellow",
                 )
                 continue
 
