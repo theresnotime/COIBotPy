@@ -12,7 +12,8 @@ def normalise_url(url):
     """Normalise a URL"""
     # TODO: Add more normalisation, and do this better-er
     url = url.replace("///", "//")
-    url = url.replace("http://https://", "https://")
+    url = url.replace("http://https://", "https://")  # Happens quite a bit..S
+    url = url.replace("doi:%2B", "doi.org/")  # ??
     return url
 
 

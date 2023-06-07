@@ -78,6 +78,11 @@ class TestCOIBot(unittest.TestCase):
             "https://example.org",
             "URL not normalised correctly",
         )
+        self.assertEqual(
+            COIBot.normalise_url("https://doi:%2B10.1007/s00606-018-1514-3"),
+            "https://doi.org/10.1007/s00606-018-1514-3",
+            "URL not normalised correctly",
+        )
 
     def test_get_project_family(self):
         self.assertEqual(
