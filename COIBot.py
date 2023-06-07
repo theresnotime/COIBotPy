@@ -125,7 +125,7 @@ if __name__ == "__main__":
                             print(
                                 f"[{added_date}] [{project_domain}] [{project_family}] [{page_id}] [{rev_id}] [{user_text}] [{link_url}] [{base_domain}]"
                             )
-            time.sleep(1)
+            time.sleep(0.1)
         except KeyError:
             cprint("Caught KeyError exception, skipping", "red")
             continue
