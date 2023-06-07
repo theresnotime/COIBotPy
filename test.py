@@ -1,4 +1,5 @@
 import allowlists
+import config
 import time
 import tldextract
 from eventstreams import EventStreams
@@ -52,6 +53,14 @@ if __name__ == "__main__":
     while stream:
         try:
             change = next(iter(stream))
+
+            if change["page_namespace"] not in config.MONITOR_NS:
+                cprint(
+                    f"Edit to unmonitored namespace ({change['page_namespace']}), skipping",
+                    "blue",
+                )
+                continue
+
             database = change["database"]
             project_domain = change["meta"]["domain"]
             performer = change["performer"]
@@ -61,7 +70,7 @@ if __name__ == "__main__":
             # Skip bot edits
             if "user_is_bot" in performer and performer["user_is_bot"]:
                 cprint(
-                    f"Bot edit by {performer['user_text']} to {database}, skipping",
+                    f"Bot edit by {performer['user_text']} to {project_domain}, skipping",
                     "blue",
                 )
                 continue

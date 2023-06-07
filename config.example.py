@@ -1,5 +1,8 @@
+USE_DB = False
 DB_USER = ""
 DB_PASSWORD = ""
 DB_HOST = ""
 DB_DATABASE = ""
 DB_PORT = ""
+
+MONITOR_NS = [0]
