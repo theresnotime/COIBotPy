@@ -16,9 +16,11 @@ wmf_domains = [
     "wmcloud.org",
 ]
 
+# TODO: Move this list on-wiki
 other_domains = [
     "creativecommons.org",
     "openstreetmap.org",
+    "worldcat.org",
 ]
 
 combined = wmf_domains + other_domains
