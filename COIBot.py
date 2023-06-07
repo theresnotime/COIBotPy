@@ -34,6 +34,12 @@ def get_project_family(project_domain):
     return tldextract.extract(project_domain).domain
 
 
+def get_fqdn_domain(url):
+    """Get the fqdn from a URL"""
+    base_domain = tldextract.extract(url).fqdn
+    return base_domain.replace("www.", "")
+
+
 def get_base_domain(url):
     """Get the base domain from a URL"""
     return tldextract.extract(url).registered_domain
@@ -175,6 +181,7 @@ if __name__ == "__main__":
                                 "yellow",
                             )
                         else:
+                            fqdn_domain = get_fqdn_domain(link_url)
                             base_domain = get_base_domain(link_url)
                             if base_domain is False or base_domain == "":
                                 raise Exception(
@@ -183,7 +190,7 @@ if __name__ == "__main__":
                             domain_ip = get_domain_ip(base_domain)
                             # Print columns for database imput
 
-                            log_entry = f"{added_date_fmt},{project_domain},{project_family},{page_id},{rev_id},{user_text},{link_url},{base_domain},{domain_ip}"
+                            log_entry = f"{added_date_fmt},{project_domain},{project_family},{page_id},{rev_id},{user_text},{link_url},{fqdn_domain},{domain_ip}"
                             cprint(log_entry, "green")
                             # Log to CSV
                             # TODO: Remove CSV logging
