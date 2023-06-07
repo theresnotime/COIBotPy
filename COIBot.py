@@ -10,8 +10,10 @@ from unfurl_archives import is_archive, unfurl
 
 def normalise_url(url):
     """Normalise a URL"""
-    # TODO: Add more normalisation
-    return url.replace("///", "//")
+    # TODO: Add more normalisation, and do this better-er
+    url = url.replace("///", "//")
+    url = url.replace("http://https://", "https://")
+    return url
 
 
 def get_project_family(project_domain):
