@@ -54,7 +54,7 @@ def check_ug_allowlists(performer):
 
 def log(file, message):
     with open(f"{file}.log", "a") as f:
-        f.write(message)
+        f.write(f"{message}\n")
 
 
 if __name__ == "__main__":
