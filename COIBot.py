@@ -182,9 +182,9 @@ if __name__ == "__main__":
                             cprint(f"Unfurling {link_url} to {unfurled}", "yellow")
                             link_url = unfurled
                         if check_url_allowlists(link_url):
-                            cprint("URL in allowlist, skipping", "green")
+                            cprint("URL in allowlist, skipping", "yellow")
                         elif check_ug_allowlists(performer):
-                            cprint("User group in allowlist, skipping", "green")
+                            cprint("User group in allowlist, skipping", "yellow")
                         else:
                             base_domain = get_base_domain(link_url)
                             if base_domain is False or base_domain == "":
@@ -194,7 +194,7 @@ if __name__ == "__main__":
                             domain_ip = get_domain_ip(base_domain)
                             # Print columns for database imput
                             log_entry = f"{added_date},{project_domain},{project_family},{page_id},{rev_id},{user_text},{link_url},{base_domain},{domain_ip}"
-                            print(log_entry)
+                            cprint(log_entry, "green")
                             # Log to CSV
                             # TODO: Remove CSV logging
                             log("links.csv", log_entry)
