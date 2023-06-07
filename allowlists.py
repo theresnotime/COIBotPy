@@ -23,6 +23,12 @@ other_domains = [
 
 combined = wmf_domains + other_domains
 
+# TODO: Move this list on-wiki
+users = [
+    "JarBot",  # Not marked as a bot
+    "LinguisticMystic",  # High rate of link additions, does not require review
+]
+
 user_groups = [
     "sysop",
 ]
