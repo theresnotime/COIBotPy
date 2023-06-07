@@ -78,6 +78,7 @@ def check_ug_allowlists(performer):
 
 
 def log(file, message):
+    """Log a message to a file"""
     with open(file, "a") as f:
         f.write(f"{message}\n")
 
