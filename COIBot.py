@@ -38,6 +38,14 @@ def check_url_allowlists(url):
     return False
 
 
+def check_url_denylists(url):
+    """Check if a URL is in the denylists"""
+    registered_domain = get_registered_domain(url)
+    if registered_domain in denylists.domains:
+        return True
+    return False
+
+
 def check_project_denylists(project_domain):
     """Check if a project is in the denylists"""
     if project_domain in denylists.projects:
@@ -117,6 +125,9 @@ if __name__ == "__main__":
                     # Skip external links
                     if link["external"]:
                         link_url = normalise_url(link["link"])
+                        if check_url_denylists(link_url):
+                            cprint("URL in denylist, skipping", "yellow")
+                            continue
                         if is_archive(link_url):
                             unfurled = unfurl(link_url)
                             if unfurled is False or unfurled is None or unfurled == "":
