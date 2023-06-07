@@ -5,3 +5,4 @@ throttle.ctrl
 config.py
 apicache-py3/
 exceptions.log
+coibot.db
