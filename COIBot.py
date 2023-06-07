@@ -94,10 +94,11 @@ if __name__ == "__main__":
     while stream:
         try:
             change = next(iter(stream))
+            added_date = change["meta"]["dt"]
 
             if change["page_namespace"] not in config.MONITOR_NS:
                 cprint(
-                    f"Edit to unmonitored namespace ({change['page_namespace']}), skipping",
+                    f"[{added_date}] Edit to unmonitored namespace ({change['page_namespace']}), skipping",
                     "blue",
                 )
                 continue
@@ -107,19 +108,18 @@ if __name__ == "__main__":
 
             if check_project_denylists(project_domain):
                 cprint(
-                    f"Edit to excluded project ({project_domain}), skipping",
+                    f"[{added_date}] Edit to excluded project ({project_domain}), skipping",
                     "blue",
                 )
                 continue
 
             performer = change["performer"]
-            added_date = change["meta"]["dt"]
             project_family = get_project_family(project_domain)
 
             # Skip bot edits
             if "user_is_bot" in performer and performer["user_is_bot"]:
                 cprint(
-                    f"Bot edit by {performer['user_text']} to {project_domain}, skipping",
+                    f"[{added_date}] Bot edit by {performer['user_text']} to {project_domain}, skipping",
                     "blue",
                 )
                 continue
@@ -127,7 +127,7 @@ if __name__ == "__main__":
             # Check performer against denylist
             if check_user_denylists(performer["user_text"]):
                 cprint(
-                    f"User {performer['user_text']} is in denylist, skipping",
+                    f"[{added_date}] User {performer['user_text']} is in denylist, skipping",
                     "yellow",
                 )
                 continue
@@ -150,7 +150,9 @@ if __name__ == "__main__":
                     if link["external"]:
                         link_url = normalise_url(link["link"])
                         if check_url_denylists(link_url):
-                            cprint("URL in denylist, skipping", "yellow")
+                            cprint(
+                                f"[{added_date}] URL in denylist, skipping", "yellow"
+                            )
                             continue
                         if is_archive(link_url):
                             unfurled = unfurl(link_url)
@@ -159,9 +161,14 @@ if __name__ == "__main__":
                             cprint(f"Unfurling {link_url} to {unfurled}", "yellow")
                             link_url = unfurled
                         if check_url_allowlists(link_url):
-                            cprint("URL in allowlist, skipping", "yellow")
+                            cprint(
+                                f"[{added_date}] URL in allowlist, skipping", "yellow"
+                            )
                         elif check_ug_allowlists(performer):
-                            cprint("User group in allowlist, skipping", "yellow")
+                            cprint(
+                                f"[{added_date}] User group in allowlist, skipping",
+                                "yellow",
+                            )
                         else:
                             base_domain = get_base_domain(link_url)
                             if base_domain is False or base_domain == "":
