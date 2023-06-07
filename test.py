@@ -5,6 +5,12 @@ from eventstreams import EventStreams
 from termcolor import cprint
 
 
+def normalise_url(url):
+    """Normalise a URL"""
+    # TODO: Add more normalisation
+    return url.replace("///", "//")
+
+
 def get_project_family(project_domain):
     """Get the project family from the project domain"""
     # Odd one out
@@ -76,7 +82,7 @@ if __name__ == "__main__":
                 for link in added_links:
                     # Skip external links
                     if link["external"]:
-                        link_url = link["link"]
+                        link_url = normalise_url(link["link"])
                         if check_url_allowlists(link_url):
                             cprint("URL in allowlist, skipping", "green")
                         elif check_ug_allowlists(performer):
