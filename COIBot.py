@@ -113,6 +113,7 @@ if __name__ == "__main__":
                             unfurled = unfurl(link_url)
                             if unfurled is False or unfurled is None or unfurled == "":
                                 raise Exception("Unfurling failed")
+                                continue
                             cprint(f"Unfurling {link_url} to {unfurled}", "yellow")
                             link_url = unfurled
                         if check_url_allowlists(link_url):
@@ -121,6 +122,11 @@ if __name__ == "__main__":
                             cprint("User group in allowlist, skipping", "green")
                         else:
                             base_domain = get_registered_domain(link_url)
+                            if base_domain is False or base_domain == "":
+                                raise Exception(
+                                    f"Failed to get base_domain of {link_url}"
+                                )
+                                continue
                             # Print columns for database imput
                             print(
                                 f"[{added_date}] [{project_domain}] [{project_family}] [{page_id}] [{rev_id}] [{user_text}] [{link_url}] [{base_domain}]"
