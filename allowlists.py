@@ -18,6 +18,7 @@ wmf_domains = [
 
 other_domains = [
     "creativecommons.org",
+    "openstreetmap.org",
 ]
 
 combined = wmf_domains + other_domains
