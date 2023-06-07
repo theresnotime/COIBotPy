@@ -4,3 +4,4 @@ venv/
 throttle.ctrl
 config.py
 apicache-py3/
+exceptions.log

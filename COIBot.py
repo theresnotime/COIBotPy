@@ -52,6 +52,11 @@ def check_ug_allowlists(performer):
     return False
 
 
+def log(file, message):
+    with open(f"{file}.log", "a") as f:
+        f.write(message)
+
+
 if __name__ == "__main__":
     stream = EventStreams(streams=["page-links-change"], timeout=1)
     # stream.register_filter(external = True)
@@ -113,7 +118,6 @@ if __name__ == "__main__":
                             unfurled = unfurl(link_url)
                             if unfurled is False or unfurled is None or unfurled == "":
                                 raise Exception("Unfurling failed")
-                                continue
                             cprint(f"Unfurling {link_url} to {unfurled}", "yellow")
                             link_url = unfurled
                         if check_url_allowlists(link_url):
@@ -126,7 +130,6 @@ if __name__ == "__main__":
                                 raise Exception(
                                     f"Failed to get base_domain of {link_url}"
                                 )
-                                continue
                             # Print columns for database imput
                             print(
                                 f"[{added_date}] [{project_domain}] [{project_family}] [{page_id}] [{rev_id}] [{user_text}] [{link_url}] [{base_domain}]"
@@ -137,4 +140,5 @@ if __name__ == "__main__":
             continue
         except Exception as e:
             cprint(f"Caught exception: {e}, skipping", "red")
+            log("exceptions", str(e))
             continue
