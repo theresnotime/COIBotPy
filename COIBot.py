@@ -111,9 +111,10 @@ if __name__ == "__main__":
                         link_url = normalise_url(link["link"])
                         if is_archive(link_url):
                             unfurled = unfurl(link_url)
-                            if unfurled is False:
+                            if unfurled is False or unfurled is None or unfurled == "":
                                 raise Exception("Unfurling failed")
                             cprint(f"Unfurling {link_url} to {unfurled}", "yellow")
+                            link_url = unfurled
                         if check_url_allowlists(link_url):
                             cprint("URL in allowlist, skipping", "green")
                         elif check_ug_allowlists(performer):
