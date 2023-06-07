@@ -92,6 +92,11 @@ class TestCOIBot(unittest.TestCase):
             "example.org",
             "Registered domain not extracted correctly",
         )
+        self.assertEqual(
+            COIBot.get_registered_domain("https://en.wikipedia.org"),
+            "wikipedia.org",
+            "Registered domain not extracted correctly",
+        )
 
 
 if __name__ == "__main__":
