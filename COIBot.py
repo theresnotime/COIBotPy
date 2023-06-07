@@ -4,6 +4,7 @@ import denylists
 import socket
 import time
 import tldextract
+from datetime import datetime
 from eventstreams import EventStreams
 from termcolor import cprint
 from unfurl_archives import is_archive, unfurl
@@ -95,10 +96,12 @@ if __name__ == "__main__":
         try:
             change = next(iter(stream))
             added_date = change["meta"]["dt"]
+            added_date_obj = datetime.strptime(added_date, "%Y-%m-%dT%H:%M:%SZ")
+            added_date_fmt = added_date_obj.strftime("%Y-%m-%d %H:%M:%S")
 
             if change["page_namespace"] not in config.MONITOR_NS:
                 cprint(
-                    f"[{added_date}] Edit to unmonitored namespace ({change['page_namespace']}), skipping",
+                    f"[{added_date_fmt}] Edit to unmonitored namespace ({change['page_namespace']}), skipping",
                     "blue",
                 )
                 continue
@@ -108,7 +111,7 @@ if __name__ == "__main__":
 
             if check_project_denylists(project_domain):
                 cprint(
-                    f"[{added_date}] Edit to excluded project ({project_domain}), skipping",
+                    f"[{added_date_fmt}] Edit to excluded project ({project_domain}), skipping",
                     "blue",
                 )
                 continue
@@ -119,7 +122,7 @@ if __name__ == "__main__":
             # Skip bot edits
             if "user_is_bot" in performer and performer["user_is_bot"]:
                 cprint(
-                    f"[{added_date}] Bot edit by {performer['user_text']} to {project_domain}, skipping",
+                    f"[{added_date_fmt}] Bot edit by {performer['user_text']} to {project_domain}, skipping",
                     "blue",
                 )
                 continue
@@ -127,7 +130,7 @@ if __name__ == "__main__":
             # Check performer against denylist
             if check_user_denylists(performer["user_text"]):
                 cprint(
-                    f"[{added_date}] User {performer['user_text']} is in denylist, skipping",
+                    f"[{added_date_fmt}] User {performer['user_text']} is in denylist, skipping",
                     "yellow",
                 )
                 continue
@@ -151,7 +154,8 @@ if __name__ == "__main__":
                         link_url = normalise_url(link["link"])
                         if check_url_denylists(link_url):
                             cprint(
-                                f"[{added_date}] URL in denylist, skipping", "yellow"
+                                f"[{added_date_fmt}] URL in denylist, skipping",
+                                "yellow",
                             )
                             continue
                         if is_archive(link_url):
@@ -162,11 +166,12 @@ if __name__ == "__main__":
                             link_url = unfurled
                         if check_url_allowlists(link_url):
                             cprint(
-                                f"[{added_date}] URL in allowlist, skipping", "yellow"
+                                f"[{added_date_fmt}] URL in allowlist, skipping",
+                                "yellow",
                             )
                         elif check_ug_allowlists(performer):
                             cprint(
-                                f"[{added_date}] User group in allowlist, skipping",
+                                f"[{added_date_fmt}] User group in allowlist, skipping",
                                 "yellow",
                             )
                         else:
@@ -177,7 +182,8 @@ if __name__ == "__main__":
                                 )
                             domain_ip = get_domain_ip(base_domain)
                             # Print columns for database imput
-                            log_entry = f"{added_date},{project_domain},{project_family},{page_id},{rev_id},{user_text},{link_url},{base_domain},{domain_ip}"
+
+                            log_entry = f"{added_date_fmt},{project_domain},{project_family},{page_id},{rev_id},{user_text},{link_url},{base_domain},{domain_ip}"
                             cprint(log_entry, "green")
                             # Log to CSV
                             # TODO: Remove CSV logging
