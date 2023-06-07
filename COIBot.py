@@ -95,7 +95,7 @@ def check_ug_allowlists(performer):
 
 
 def log(file, message):
-    with open(f"{file}.log", "a") as f:
+    with open(file, "a") as f:
         f.write(f"{message}\n")
 
 
@@ -178,14 +178,16 @@ if __name__ == "__main__":
                                 )
                             domain_ip = get_domain_ip(base_domain)
                             # Print columns for database imput
-                            print(
-                                f"[{added_date}] [{project_domain}] [{project_family}] [{page_id}] [{rev_id}] [{user_text}] [{link_url}] [{base_domain}] [{domain_ip}]"
-                            )
+                            log_entry = f"{added_date},{project_domain},{project_family},{page_id},{rev_id},{user_text},{link_url},{base_domain},{domain_ip}"
+                            print(log_entry)
+                            # Log to CSV
+                            # TODO: Remove CSV logging
+                            log("links.csv", log_entry)
             time.sleep(0.2)
         except KeyError:
             cprint("Caught KeyError exception, skipping", "red")
             continue
         except Exception as e:
             cprint(f"Caught exception: {e}, skipping", "red")
-            log("exceptions", str(e))
+            log("exceptions.log", str(e))
             continue
