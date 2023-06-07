@@ -110,10 +110,10 @@ if __name__ == "__main__":
                     if link["external"]:
                         link_url = normalise_url(link["link"])
                         if is_archive(link_url):
-                            cprint(
-                                f"Unfurling {link_url} to {unfurl(link_url)}", "yellow"
-                            )
-                            link_url = unfurl(link_url)
+                            unfurled = unfurl(link_url)
+                            if unfurled is False:
+                                raise Exception("Unfurling failed")
+                            cprint(f"Unfurling {link_url} to {unfurled}", "yellow")
                         if check_url_allowlists(link_url):
                             cprint("URL in allowlist, skipping", "green")
                         elif check_ug_allowlists(performer):
@@ -127,4 +127,7 @@ if __name__ == "__main__":
             time.sleep(1)
         except KeyError:
             cprint("Caught KeyError exception, skipping", "red")
+            continue
+        except Exception as e:
+            cprint(f"Caught exception: {e}, skipping", "red")
             continue
