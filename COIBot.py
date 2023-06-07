@@ -4,6 +4,7 @@ import time
 import tldextract
 from eventstreams import EventStreams
 from termcolor import cprint
+from unfurl_archives import is_archive, unfurl
 
 
 def normalise_url(url):
@@ -92,6 +93,11 @@ if __name__ == "__main__":
                     # Skip external links
                     if link["external"]:
                         link_url = normalise_url(link["link"])
+                        if is_archive(link_url):
+                            cprint(
+                                f"Unfurling {link_url} to {unfurl(link_url)}", "yellow"
+                            )
+                            link_url = unfurl(link_url)
                         if check_url_allowlists(link_url):
                             cprint("URL in allowlist, skipping", "green")
                         elif check_ug_allowlists(performer):
