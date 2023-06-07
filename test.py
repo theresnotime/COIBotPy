@@ -44,45 +44,50 @@ if __name__ == "__main__":
         "[added_date] [project_domain] [project_family] [page_id] [rev_id] [user_text] [link_url] [base_domain]"
     )
     while stream:
-        change = next(iter(stream))
-        database = change["database"]
-        project_domain = change["meta"]["domain"]
-        performer = change["performer"]
-        added_date = change["meta"]["dt"]
-        project_family = get_project_family(project_domain)
+        try:
+            change = next(iter(stream))
+            database = change["database"]
+            project_domain = change["meta"]["domain"]
+            performer = change["performer"]
+            added_date = change["meta"]["dt"]
+            project_family = get_project_family(project_domain)
 
-        # Skip bot edits
-        if "user_is_bot" in performer and performer["user_is_bot"]:
-            cprint(
-                f"Bot edit by {performer['user_text']} to {database}, skipping", "blue"
-            )
+            # Skip bot edits
+            if "user_is_bot" in performer and performer["user_is_bot"]:
+                cprint(
+                    f"Bot edit by {performer['user_text']} to {database}, skipping",
+                    "blue",
+                )
+                continue
+
+            # Skip edits which don't add links
+            if "added_links" in change:
+                page_id = change["page_id"]
+                page_title = change["page_title"]
+                rev_id = change["rev_id"]
+                if "user_id" in performer:
+                    user_id = performer["user_id"]
+                else:
+                    user_id = None
+                    user_is_ip = True
+                user_text = performer["user_text"]
+
+                added_links = change["added_links"]
+                for link in added_links:
+                    # Skip external links
+                    if link["external"]:
+                        link_url = link["link"]
+                        if check_url_allowlists(link_url):
+                            cprint("URL in allowlist, skipping", "green")
+                        elif check_ug_allowlists(performer):
+                            cprint("User group in allowlist, skipping", "green")
+                        else:
+                            base_domain = get_registered_domain(link_url)
+                            # Print columns for database imput
+                            print(
+                                f"[{added_date}] [{project_domain}] [{project_family}] [{page_id}] [{rev_id}] [{user_text}] [{link_url}] [{base_domain}]"
+                            )
+            time.sleep(1)
+        except KeyError:
+            cprint("Caught KeyError exception, skipping", "red")
             continue
-
-        # Skip edits which don't add links
-        if "added_links" in change:
-            page_id = change["page_id"]
-            page_title = change["page_title"]
-            rev_id = change["rev_id"]
-            if "user_id" in performer:
-                user_id = performer["user_id"]
-            else:
-                user_id = None
-                user_is_ip = True
-            user_text = performer["user_text"]
-
-            added_links = change["added_links"]
-            for link in added_links:
-                # Skip external links
-                if link["external"]:
-                    link_url = link["link"]
-                    if check_url_allowlists(link_url):
-                        cprint("URL in allowlist, skipping", "green")
-                    elif check_ug_allowlists(performer):
-                        cprint("User group in allowlist, skipping", "green")
-                    else:
-                        base_domain = get_registered_domain(link_url)
-                        # Print columns for database imput
-                        print(
-                            f"[{added_date}] [{project_domain}] [{project_family}] [{page_id}] [{rev_id}] [{user_text}] [{link_url}] [{base_domain}]"
-                        )
-        time.sleep(1)

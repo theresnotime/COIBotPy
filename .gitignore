@@ -3,3 +3,4 @@ __pycache__/
 venv/
 throttle.ctrl
 config.py
+apicache-py3/
