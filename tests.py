@@ -112,12 +112,12 @@ class TestCOIBot(unittest.TestCase):
 
     def test_get_registered_domain(self):
         self.assertEqual(
-            COIBot.get_registered_domain("https://www.example.org"),
+            COIBot.get_base_domain("https://www.example.org"),
             "example.org",
             "Registered domain not extracted correctly",
         )
         self.assertEqual(
-            COIBot.get_registered_domain("https://en.wikipedia.org"),
+            COIBot.get_base_domain("https://en.wikipedia.org"),
             "wikipedia.org",
             "Registered domain not extracted correctly",
         )

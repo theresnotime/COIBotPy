@@ -1,6 +1,7 @@
 import allowlists
 import config
 import denylists
+import socket
 import sqlite3
 import time
 import tldextract
@@ -33,6 +34,10 @@ def log_to_db():
     pass
 
 
+def get_domain_ip(base_domain):
+    return socket.gethostbyname(base_domain)
+
+
 def normalise_url(url):
     """Normalise a URL"""
     # TODO: Add more normalisation, and do this better-er
@@ -51,14 +56,14 @@ def get_project_family(project_domain):
     return tldextract.extract(project_domain).domain
 
 
-def get_registered_domain(url):
-    """Get the registered domain from a URL"""
+def get_base_domain(url):
+    """Get the base domain from a URL"""
     return tldextract.extract(url).registered_domain
 
 
 def check_url_allowlists(url):
     """Check if a URL is in the allowlists"""
-    registered_domain = get_registered_domain(url)
+    registered_domain = get_base_domain(url)
     if registered_domain in allowlists.combined:
         return True
     return False
@@ -66,7 +71,7 @@ def check_url_allowlists(url):
 
 def check_url_denylists(url):
     """Check if a URL is in the denylists"""
-    registered_domain = get_registered_domain(url)
+    registered_domain = get_base_domain(url)
     if registered_domain in denylists.domains:
         return True
     return False
@@ -100,7 +105,7 @@ if __name__ == "__main__":
     # stream.register_filter(external = True)
 
     print(
-        "[added_date] [project_domain] [project_family] [page_id] [rev_id] [user_text] [link_url] [base_domain]"
+        "[added_date] [project_domain] [project_family] [page_id] [rev_id] [user_text] [link_url] [base_domain] [domain_ip]"
     )
     while stream:
         try:
@@ -166,16 +171,17 @@ if __name__ == "__main__":
                         elif check_ug_allowlists(performer):
                             cprint("User group in allowlist, skipping", "green")
                         else:
-                            base_domain = get_registered_domain(link_url)
+                            base_domain = get_base_domain(link_url)
                             if base_domain is False or base_domain == "":
                                 raise Exception(
                                     f"Failed to get base_domain of {link_url}"
                                 )
+                            domain_ip = get_domain_ip(base_domain)
                             # Print columns for database imput
                             print(
-                                f"[{added_date}] [{project_domain}] [{project_family}] [{page_id}] [{rev_id}] [{user_text}] [{link_url}] [{base_domain}]"
+                                f"[{added_date}] [{project_domain}] [{project_family}] [{page_id}] [{rev_id}] [{user_text}] [{link_url}] [{base_domain}] [{domain_ip}]"
                             )
-            time.sleep(0.1)
+            time.sleep(0.2)
         except KeyError:
             cprint("Caught KeyError exception, skipping", "red")
             continue
