@@ -195,7 +195,7 @@ if __name__ == "__main__":
                             # Log to CSV
                             # TODO: Remove CSV logging
                             log("links.csv", log_entry)
-            time.sleep(0.2)
+            time.sleep(0.1)
         except KeyError:
             cprint("Caught KeyError exception, skipping", "red")
             continue
