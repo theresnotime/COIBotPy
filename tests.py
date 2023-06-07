@@ -43,6 +43,20 @@ class TestCOIBot(unittest.TestCase):
             "URL incorrectly identified as in allowlist",
         )
 
+    def test_url_denylist(self):
+        self.assertEqual(
+            COIBot.check_url_denylists(
+                "https://web.archive.org/web/1234567890/http://www.example.org/nyaa"
+            ),
+            True,
+            "URL incorrectly identified as not in denylist",
+        )
+        self.assertEqual(
+            COIBot.check_url_denylists("https://www.example.org"),
+            False,
+            "URL incorrectly identified as in denylist",
+        )
+
     def test_ug_allowlists(self):
         self.assertEqual(
             COIBot.check_ug_allowlists({"user_groups": "sysop"}),
