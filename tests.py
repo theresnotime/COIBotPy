@@ -69,6 +69,13 @@ class TestCOIBot(unittest.TestCase):
             "User group incorrectly identified as in allowlist",
         )
 
+    def test_user_denylists(self):
+        self.assertEqual(
+            COIBot.check_user_denylists("JarBot"),
+            True,
+            "User incorrectly identified as not in denylist",
+        )
+
     def test_project_denylists(self):
         self.assertEqual(
             COIBot.check_project_denylists("en.wikipedia.org"),
@@ -112,12 +119,12 @@ class TestCOIBot(unittest.TestCase):
 
     def test_get_registered_domain(self):
         self.assertEqual(
-            COIBot.get_registered_domain("https://www.example.org"),
+            COIBot.get_base_domain("https://www.example.org"),
             "example.org",
             "Registered domain not extracted correctly",
         )
         self.assertEqual(
-            COIBot.get_registered_domain("https://en.wikipedia.org"),
+            COIBot.get_base_domain("https://en.wikipedia.org"),
             "wikipedia.org",
             "Registered domain not extracted correctly",
         )
