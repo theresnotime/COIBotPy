@@ -2,39 +2,15 @@ import allowlists
 import config
 import denylists
 import socket
-import sqlite3
 import time
 import tldextract
 from eventstreams import EventStreams
 from termcolor import cprint
 from unfurl_archives import is_archive, unfurl
 
-CON = sqlite3.connect("coibot.db")
-
-
-def setup_db():
-    cur = CON.cursor()
-    cur.execute(
-        """
-    CREATE TABLE IF NOT EXISTS links(
-        added_date datetime,
-        project_domain text,
-        project_family text,
-        page_id integer,
-        rev_id integer,
-        user_text text,
-        link_url text,
-        base_domain text
-    )"""
-    )
-    CON.commit()
-
-
-def log_to_db():
-    pass
-
 
 def get_domain_ip(base_domain):
+    """Get the IP address of a domain"""
     return socket.gethostbyname(base_domain)
 
 
@@ -107,7 +83,6 @@ def log(file, message):
 
 
 if __name__ == "__main__":
-    setup_db()
     stream = EventStreams(streams=["page-links-change"], timeout=1)
     # stream.register_filter(external = True)
 
