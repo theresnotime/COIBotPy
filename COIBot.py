@@ -117,7 +117,7 @@ if __name__ == "__main__":
                         if is_archive(link_url):
                             unfurled = unfurl(link_url)
                             if unfurled is False or unfurled is None or unfurled == "":
-                                raise Exception("Unfurling failed")
+                                raise Exception(f"Unfurling {link_url} failed")
                             cprint(f"Unfurling {link_url} to {unfurled}", "yellow")
                             link_url = unfurled
                         if check_url_allowlists(link_url):
