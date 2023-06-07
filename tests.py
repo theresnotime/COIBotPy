@@ -55,6 +55,18 @@ class TestCOIBot(unittest.TestCase):
             "User group incorrectly identified as in allowlist",
         )
 
+    def test_project_denylists(self):
+        self.assertEqual(
+            COIBot.check_project_denylists("en.wikipedia.org"),
+            False,
+            "URL incorrectly identified as in denylist",
+        )
+        self.assertEqual(
+            COIBot.check_project_denylists("test.wikipedia.org"),
+            True,
+            "URL incorrectly identified as not in denylist",
+        )
+
     def test_normalise_url(self):
         self.assertEqual(
             COIBot.normalise_url("///www.example.org/test"),

@@ -20,7 +20,7 @@ other_domains = [
     "creativecommons.org",
 ]
 
-combined_domains = wmf_domains + other_domains
+combined = wmf_domains + other_domains
 
 user_groups = [
     "sysop",

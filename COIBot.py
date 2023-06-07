@@ -1,5 +1,6 @@
 import allowlists
 import config
+import denylists
 import time
 import tldextract
 from eventstreams import EventStreams
@@ -29,7 +30,14 @@ def get_registered_domain(url):
 def check_url_allowlists(url):
     """Check if a URL is in the allowlists"""
     registered_domain = get_registered_domain(url)
-    if registered_domain in allowlists.combined_domains:
+    if registered_domain in allowlists.combined:
+        return True
+    return False
+
+
+def check_project_denylists(project_domain):
+    """Check if a project is in the denylists"""
+    if project_domain in denylists.projects:
         return True
     return False
 
@@ -64,6 +72,14 @@ if __name__ == "__main__":
 
             database = change["database"]
             project_domain = change["meta"]["domain"]
+
+            if check_project_denylists(project_domain):
+                cprint(
+                    f"Edit to excluded project ({project_domain}), skipping",
+                    "blue",
+                )
+                continue
+
             performer = change["performer"]
             added_date = change["meta"]["dt"]
             project_family = get_project_family(project_domain)
