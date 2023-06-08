@@ -33,11 +33,7 @@ def log_to_db(
     domain_ip: str,
     table: str = "global_links",
 ) -> None:
-    sql = (
-        "INSERT INTO "
-        + table
-        + " (added_date, project_domain, project_family, page_id, rev_id, user_text, link_url, base_domain, domain_ip) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    )
+    sql = f"INSERT INTO {table} (added_date, project_domain, project_family, page_id, rev_id, user_text, link_url, base_domain, domain_ip) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
     values = (
         added_date,
         project_domain,
