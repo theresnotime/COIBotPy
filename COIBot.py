@@ -1,6 +1,7 @@
 import allowlists
 import config
 import denylists
+import mysql.connector
 import socket
 import time
 import tldextract
@@ -8,6 +9,49 @@ from datetime import datetime
 from eventstreams import EventStreams
 from termcolor import cprint
 from unfurl_archives import is_archive, unfurl
+
+if config.USE_DB:
+    db = mysql.connector.connect(
+        host=config.DB_HOST,
+        user=config.DB_USER,
+        password=config.DB_PASSWORD,
+        database=config.DB_DATABASE,
+        port=config.DB_PORT,
+    )
+    cursor = db.cursor()
+
+
+def log_to_db(
+    added_date: str,
+    project_domain: str,
+    project_family: str,
+    page_id: int,
+    rev_id: int,
+    user_text: str,
+    link_url: str,
+    base_domain: str,
+    domain_ip: str,
+    table: str = "global_links",
+) -> None:
+    sql = (
+        "INSERT INTO "
+        + table
+        + " (added_date, project_domain, project_family, page_id, rev_id, user_text, link_url, base_domain, domain_ip) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    )
+    print(sql)
+    values = (
+        added_date,
+        project_domain,
+        project_family,
+        page_id,
+        rev_id,
+        user_text,
+        link_url,
+        base_domain,
+        domain_ip,
+    )
+    cursor.execute(sql, values)
+    db.commit()
 
 
 def get_domain_ip(base_domain):
@@ -192,9 +236,24 @@ if __name__ == "__main__":
 
                             log_entry = f"{added_date_fmt},{project_domain},{project_family},{page_id},{rev_id},{user_text},{link_url},{fqdn_domain},{domain_ip}"
                             cprint(log_entry, "green")
+
                             # Log to CSV
                             # TODO: Remove CSV logging
                             log("links.csv", log_entry)
+
+                            # Log to database
+                            if config.USE_DB:
+                                log_to_db(
+                                    added_date_fmt,
+                                    project_domain,
+                                    project_family,
+                                    page_id,
+                                    rev_id,
+                                    user_text,
+                                    link_url,
+                                    fqdn_domain,
+                                    domain_ip,
+                                )
             time.sleep(0.1)
         except KeyError:
             cprint("Caught KeyError exception, skipping", "red")
