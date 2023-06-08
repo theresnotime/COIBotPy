@@ -55,7 +55,7 @@ def check_url_allowlists(url):
 
 def check_user_denylists(user):
     """Check if a user is in the denylists"""
-    if user in denylists.users:
+    if user in allowlists.users:
         return True
     return False
 
