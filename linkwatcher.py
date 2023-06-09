@@ -232,10 +232,6 @@ if __name__ == "__main__":
                             log_entry = f"{added_date_fmt},{project_domain},{project_family},{page_id},{rev_id},{user_text},{link_url},{fqdn_domain},{domain_ip}"
                             cprint(log_entry, "green")
 
-                            # Log to CSV
-                            # TODO: Remove CSV logging
-                            log("links.csv", log_entry)
-
                             # Log to database
                             if config.USE_DB:
                                 log_to_db(
