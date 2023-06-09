@@ -3,6 +3,7 @@ import config
 import denylists
 import mysql.connector
 import socket
+import sys
 import time
 import tldextract
 from datetime import datetime
@@ -132,12 +133,15 @@ def log(file, message):
 
 if __name__ == "__main__":
     stream = EventStreams(streams=["page-links-change"], timeout=1)
-    # stream.register_filter(external = True)
+    exceptionCount = 0
 
     print(
         "[added_date] [project_domain] [project_family] [page_id] [rev_id] [user_text] [link_url] [base_domain] [domain_ip]"
     )
     while stream:
+        # Dumb way to prevent continuous exceptions
+        if exceptionCount > 10:
+            sys.exit(1)
         try:
             change = next(iter(stream))
             added_date = change["meta"]["dt"]
@@ -245,11 +249,14 @@ if __name__ == "__main__":
                                     fqdn_domain,
                                     domain_ip,
                                 )
+            exceptionCount = 0
             time.sleep(0.1)
         except KeyError:
             cprint("Caught KeyError exception, skipping", "red")
+            exceptionCount += 1
             continue
         except Exception as e:
             cprint(f"Caught exception: {e}, skipping", "red")
             log("exceptions.log", str(e))
+            exceptionCount += 1
             continue
