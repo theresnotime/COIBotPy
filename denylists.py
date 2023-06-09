@@ -6,6 +6,7 @@ projects = [
 domains = [
     "archive.org",  # Temp ignoring archive sites
     "archive.is",  # "
+    "archive.today",  # "
 ]
 
 users = [
