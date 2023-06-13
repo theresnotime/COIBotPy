@@ -33,21 +33,33 @@ def log_to_db(
     base_domain: str,
     domain_ip: str,
     table: str = "global_links",
-) -> None:
-    sql = f"INSERT INTO {table} (added_date, project_domain, project_family, page_id, rev_id, user_text, link_url, base_domain, domain_ip) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    values = (
-        added_date,
-        project_domain,
-        project_family,
-        page_id,
-        rev_id,
-        user_text,
-        link_url,
-        base_domain,
-        domain_ip,
-    )
-    cursor.execute(sql, values)
-    db.commit()
+) -> bool:
+    try:
+        # No autocommit
+        db.autocommit = False
+
+        sql = f"INSERT INTO {table} (added_date, project_domain, project_family, page_id, rev_id, user_text, link_url, base_domain, domain_ip) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        values = (
+            added_date,
+            project_domain,
+            project_family,
+            page_id,
+            rev_id,
+            user_text,
+            link_url,
+            base_domain,
+            domain_ip,
+        )
+        cursor.execute(sql, values)
+        db.commit()
+        return True
+    except mysql.connector.Error as error:
+        cprint(f"Failed to update record to database rollback: {e}", "red")
+        log("exceptions.log", str(format(error)))
+
+        # reverting changes because of exception
+        db.rollback()
+        return False
 
 
 def get_domain_ip(base_domain):
