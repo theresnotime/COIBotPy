@@ -213,6 +213,7 @@ if __name__ == "__main__":
                                 f"[{added_date_fmt}] URL in skiplists, skipping",
                                 "yellow",
                             )
+                            continue
                         if is_archive(link_url):
                             unfurled = unfurl(link_url)
                             if unfurled is False or unfurled is None or unfurled == "":
