@@ -35,6 +35,7 @@ def log_to_db(
     domain_ip: str,
     table: str = "global_links",
 ) -> bool:
+    """Log a link to the database"""
     try:
         # No autocommit
         db.autocommit = False
@@ -65,12 +66,12 @@ def log_to_db(
         return False
 
 
-def get_domain_ip(base_domain):
+def get_domain_ip(base_domain) -> str:
     """Get the IP address of a domain"""
     return socket.gethostbyname(base_domain)
 
 
-def normalise_url(url):
+def normalise_url(url) -> str:
     """Normalise a URL"""
     # TODO: Add more normalisation, and do this better-er
     url = url.replace("///", "//")
@@ -81,7 +82,7 @@ def normalise_url(url):
     return url
 
 
-def get_project_family(project_domain):
+def get_project_family(project_domain) -> str:
     """Get the project family from the project domain"""
     # Odd one out
     if project_domain == "commons.wikimedia.org":
@@ -89,18 +90,18 @@ def get_project_family(project_domain):
     return tldextract.extract(project_domain).domain
 
 
-def get_fqdn_domain(url):
+def get_fqdn_domain(url) -> str:
     """Get the fqdn from a URL"""
     base_domain = tldextract.extract(url).fqdn
     return base_domain.replace("www.", "")
 
 
-def get_base_domain(url):
+def get_base_domain(url) -> str:
     """Get the base domain from a URL"""
     return tldextract.extract(url).registered_domain
 
 
-def check_url_skiplists(url):
+def check_url_skiplists(url) -> bool:
     """Check if a URL is in the skiplists"""
     registered_domain = get_base_domain(url)
     if registered_domain in skiplists.combined:
@@ -108,28 +109,28 @@ def check_url_skiplists(url):
     return False
 
 
-def check_user_skiplists(user):
+def check_user_skiplists(user) -> bool:
     """Check if a user is in the skiplists"""
     if user in skiplists.users:
         return True
     return False
 
 
-def check_project_skiplists(project_domain):
+def check_project_skiplists(project_domain) -> bool:
     """Check if a project is in the skiplists"""
     if project_domain in skiplists.projects:
         return True
     return False
 
 
-def check_ug_skiplists(performer):
+def check_ug_skiplists(performer) -> bool:
     """Check if a user group is in the skiplists"""
     if "user_groups" in performer and performer["user_groups"] in skiplists.user_groups:
         return True
     return False
 
 
-def log(file, message):
+def log(file, message) -> None:
     """Log a message to a file"""
     with open(file, "a") as f:
         f.write(f"{message}\n")
