@@ -1,7 +1,6 @@
-import allowlists
 import config
-import denylists
 import mysql.connector
+import skiplists
 import socket
 import sys
 import time
@@ -11,7 +10,7 @@ from eventstreams import EventStreams
 from termcolor import cprint
 from unfurl_archives import is_archive, unfurl
 
-__VERSION__ = "1.0.0"
+__version__ = "1.2.0"
 
 if config.USE_DB:
     db = mysql.connector.connect(
@@ -101,42 +100,31 @@ def get_base_domain(url):
     return tldextract.extract(url).registered_domain
 
 
-def check_url_allowlists(url):
-    """Check if a URL is in the allowlists"""
+def check_url_skiplists(url):
+    """Check if a URL is in the skiplists"""
     registered_domain = get_base_domain(url)
-    if registered_domain in allowlists.combined:
+    if registered_domain in skiplists.combined:
         return True
     return False
 
 
-def check_user_denylists(user):
-    """Check if a user is in the denylists"""
-    if user in allowlists.users:
+def check_user_skiplists(user):
+    """Check if a user is in the skiplists"""
+    if user in skiplists.users:
         return True
     return False
 
 
-def check_url_denylists(url):
-    """Check if a URL is in the denylists"""
-    registered_domain = get_base_domain(url)
-    if registered_domain in denylists.domains:
+def check_project_skiplists(project_domain):
+    """Check if a project is in the skiplists"""
+    if project_domain in skiplists.projects:
         return True
     return False
 
 
-def check_project_denylists(project_domain):
-    """Check if a project is in the denylists"""
-    if project_domain in denylists.projects:
-        return True
-    return False
-
-
-def check_ug_allowlists(performer):
-    """Check if a user group is in the allowlists"""
-    if (
-        "user_groups" in performer
-        and performer["user_groups"] in allowlists.user_groups
-    ):
+def check_ug_skiplists(performer):
+    """Check if a user group is in the skiplists"""
+    if "user_groups" in performer and performer["user_groups"] in skiplists.user_groups:
         return True
     return False
 
@@ -151,7 +139,7 @@ if __name__ == "__main__":
     stream = EventStreams(streams=["page-links-change"], timeout=1)
     exceptionCount = 0
 
-    print(f"Starting linkwatcher v{__VERSION__}")
+    print(f"Starting linkwatcher v{__version__}")
 
     print(
         "[added_date] [project_domain] [project_family] [page_id] [rev_id] [user_text] [link_url] [base_domain] [domain_ip]"
@@ -176,7 +164,7 @@ if __name__ == "__main__":
             database = change["database"]
             project_domain = change["meta"]["domain"]
 
-            if check_project_denylists(project_domain):
+            if check_project_skiplists(project_domain):
                 cprint(
                     f"[{added_date_fmt}] Edit to excluded project ({project_domain}), skipping",
                     "blue",
@@ -195,7 +183,7 @@ if __name__ == "__main__":
                 continue
 
             # Check performer against denylist
-            if check_user_denylists(performer["user_text"]):
+            if check_user_skiplists(performer["user_text"]):
                 cprint(
                     f"[{added_date_fmt}] User {performer['user_text']} is in denylist, skipping",
                     "yellow",
@@ -219,26 +207,25 @@ if __name__ == "__main__":
                     # Skip external links
                     if link["external"]:
                         link_url = normalise_url(link["link"])
-                        if check_url_denylists(link_url):
+                        if check_url_skiplists(link_url):
                             cprint(
-                                f"[{added_date_fmt}] URL in denylist, skipping",
+                                f"[{added_date_fmt}] URL in skiplists, skipping",
                                 "yellow",
                             )
-                            continue
                         if is_archive(link_url):
                             unfurled = unfurl(link_url)
                             if unfurled is False or unfurled is None or unfurled == "":
                                 raise Exception(f"Unfurling {link_url} failed")
                             cprint(f"Unfurling {link_url} to {unfurled}", "yellow")
                             link_url = unfurled
-                        if check_url_allowlists(link_url):
+                        if check_url_skiplists(link_url):
                             cprint(
-                                f"[{added_date_fmt}] URL in allowlist, skipping",
+                                f"[{added_date_fmt}] URL in skiplists, skipping",
                                 "yellow",
                             )
-                        elif check_ug_allowlists(performer):
+                        elif check_ug_skiplists(performer):
                             cprint(
-                                f"[{added_date_fmt}] User group in allowlist, skipping",
+                                f"[{added_date_fmt}] User group in skiplists, skipping",
                                 "yellow",
                             )
                         else:

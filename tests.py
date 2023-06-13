@@ -33,59 +33,59 @@ class TestUnfurls(unittest.TestCase):
 class TestCOIBot(unittest.TestCase):
     def test_wmf_domains(self):
         self.assertEqual(
-            linkwatcher.check_url_allowlists("https://www.wikidata.org/wiki/Q1"),
+            linkwatcher.check_url_skiplists("https://www.wikidata.org/wiki/Q1"),
             True,
             "URL incorrectly identified as not in allowlist",
         )
         self.assertEqual(
-            linkwatcher.check_url_allowlists("https://www.example.org"),
+            linkwatcher.check_url_skiplists("https://www.example.org"),
             False,
             "URL incorrectly identified as in allowlist",
         )
 
-    def test_url_denylist(self):
+    def test_url_skiplists(self):
         self.assertEqual(
-            linkwatcher.check_url_denylists(
+            linkwatcher.check_url_skiplists(
                 "https://web.archive.org/web/1234567890/http://www.example.org/nyaa"
             ),
             True,
-            "URL incorrectly identified as not in denylist",
+            "URL incorrectly identified as not in skiplists",
         )
         self.assertEqual(
-            linkwatcher.check_url_denylists("https://www.example.org"),
+            linkwatcher.check_url_skiplists("https://www.example.org"),
             False,
-            "URL incorrectly identified as in denylist",
+            "URL incorrectly identified as in skiplists",
         )
 
-    def test_ug_allowlists(self):
+    def test_ug_skiplists(self):
         self.assertEqual(
-            linkwatcher.check_ug_allowlists({"user_groups": "sysop"}),
+            linkwatcher.check_ug_skiplists({"user_groups": "sysop"}),
             True,
-            "User group incorrectly identified as not in allowlist",
+            "User group incorrectly identified as not in skiplists",
         )
         self.assertEqual(
-            linkwatcher.check_ug_allowlists({"user_groups": "confirmed"}),
+            linkwatcher.check_ug_skiplists({"user_groups": "confirmed"}),
             False,
-            "User group incorrectly identified as in allowlist",
+            "User group incorrectly identified as in skiplists",
         )
 
-    def test_user_denylists(self):
+    def test_user_skiplists(self):
         self.assertEqual(
-            linkwatcher.check_user_denylists("JarBot"),
+            linkwatcher.check_user_skiplists("JarBot"),
             True,
-            "User incorrectly identified as not in denylist",
+            "User incorrectly identified as not in skiplists",
         )
 
-    def test_project_denylists(self):
+    def test_project_skiplists(self):
         self.assertEqual(
-            linkwatcher.check_project_denylists("en.wikipedia.org"),
+            linkwatcher.check_project_skiplists("en.wikipedia.org"),
             False,
-            "URL incorrectly identified as in denylist",
+            "URL incorrectly identified as in skiplists",
         )
         self.assertEqual(
-            linkwatcher.check_project_denylists("test.wikipedia.org"),
+            linkwatcher.check_project_skiplists("test.wikipedia.org"),
             True,
-            "URL incorrectly identified as not in denylist",
+            "URL incorrectly identified as not in skiplists",
         )
 
     def test_normalise_url(self):
@@ -131,4 +131,5 @@ class TestCOIBot(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    print(f"Testing linkwatcher v{linkwatcher.__version__}")
     unittest.main()
