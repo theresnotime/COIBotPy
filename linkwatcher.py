@@ -11,6 +11,8 @@ from eventstreams import EventStreams
 from termcolor import cprint
 from unfurl_archives import is_archive, unfurl
 
+__VERSION__ = "1.0.0"
+
 if config.USE_DB:
     db = mysql.connector.connect(
         host=config.DB_HOST,
@@ -54,7 +56,9 @@ def log_to_db(
         db.commit()
         return True
     except mysql.connector.Error as error:
-        cprint(f"Failed to update record to database rollback: {e}", "red")
+        cprint(
+            f"Failed to update record to database rollback: {str(format(error))}", "red"
+        )
         log("exceptions.log", str(format(error)))
 
         # reverting changes because of exception
@@ -146,6 +150,8 @@ def log(file, message):
 if __name__ == "__main__":
     stream = EventStreams(streams=["page-links-change"], timeout=1)
     exceptionCount = 0
+
+    print(f"Starting linkwatcher v{__VERSION__}")
 
     print(
         "[added_date] [project_domain] [project_family] [page_id] [rev_id] [user_text] [link_url] [base_domain] [domain_ip]"
