@@ -3,6 +3,6 @@ mwparserfromhell==0.6.4
 pywikibot==8.1.2
 sseclient==0.0.27
 termcolor==2.3.0
-urllib3==2.0.3
+urllib3==2.0.6
 mysql-connector-python==8.0.33
 tldextract==3.4.4
